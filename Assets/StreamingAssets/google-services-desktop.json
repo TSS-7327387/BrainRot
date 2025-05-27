@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "748863233462",
+    "project_id": "commandoaction",
+    "storage_bucket": "commandoaction.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748863233462:android:592addee0419a91f8e3517",
+        "android_client_info": {
+          "package_name": "com.ar.c.test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvM8m8mbSRgagfnFt4ib2guJZjYb_TttI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
