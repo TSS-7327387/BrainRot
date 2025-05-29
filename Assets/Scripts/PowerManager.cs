@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System;
 
 public class PowerManager : MonoBehaviour
 {
@@ -18,15 +19,16 @@ public class PowerManager : MonoBehaviour
     public GameObject hammerEffect, starEffect;
     Vector3 hammerParentStartPos;
     public Button hammerBtn, starBtn;
+    public AudioClip hammerSound, starSound;
 
     private void Start()
     {
-        PlayerPrefs.SetInt("Hammer", 3);
-        PlayerPrefs.SetInt("Star", 3);
         hammerParentStartPos = hammerParent.position;
-        UpdateText();
         hammerBtn.onClick.AddListener(ShowHammer);
         starBtn.onClick.AddListener(UseStarPower);
+        PlayerPrefs.SetInt("Hammer",3);
+        PlayerPrefs.SetInt("Star", 2);
+        UpdateText();
     }
     bool usingHammer;
     bool usingStar;
@@ -48,20 +50,21 @@ public class PowerManager : MonoBehaviour
     }
     void UpdateText()
     {
-        hammerNo.text = PlayerPrefs.GetInt("Hammer", 3).ToString();
-        starNo.text = PlayerPrefs.GetInt("Star", 2).ToString();
+        hammerNo.text = PlayerPrefs.GetInt("Hammer").ToString();
+        starNo.text = PlayerPrefs.GetInt("Star").ToString();
     }
     public void ShowHammer()
     {
-        if (PlayerPrefs.GetInt("Hammer", 3) > 0)
+        GameManager.Instance.oSpawner.hDrag.gameOver = true;
+        if (PlayerPrefs.GetInt("Hammer") > 0)
         {
             hammer.SetActive(true);
-            PlayerPrefs.SetInt("Hammer", PlayerPrefs.GetInt("Hammer", 3)-1);
+            PlayerPrefs.SetInt("Hammer", PlayerPrefs.GetInt("Hammer")-1);
             UpdateText();
             hammerBtn.interactable = false;
             starBtn.interactable = false;
-            GameManager.Instance.oSpawner.gameOver = true;
             DOVirtual.DelayedCall(0.1f,()=> { usingHammer = true; });
+            TSS_AnalyticalManager.instance.CustomBtnEvent("using_HammerPower");
         }
         else
             ShowNotEnoughPower(true);
@@ -74,6 +77,7 @@ public class PowerManager : MonoBehaviour
             hammer.transform.DORotate(new Vector3(0, 0, -51), 0.33f).SetEase(Ease.OutBounce).SetLoops(2, LoopType.Yoyo).OnComplete(
                 () =>
                 {
+                    AudioManager.instance.PlayPowerSFX(hammerSound);
                     /*Vector3 touchWorldPos = Camera.main.ScreenToWorldPoint(touch.position);
                     Vector2 touchPos2D = new Vector2(touchWorldPos.x, touchWorldPos.y);*/
                     HammerEffect(pos);
@@ -110,23 +114,24 @@ public class PowerManager : MonoBehaviour
             hammer.SetActive(false);
             hammerBtn.interactable = true;
             starBtn.interactable = true;
-            GameManager.Instance.oSpawner.gameOver = false;
+            GameManager.Instance.oSpawner.hDrag.gameOver = false;
         });
     }
     #endregion
-    #region StarPoer
+    #region StarPower
     public void UseStarPower()
     {
-        if (PlayerPrefs.GetInt("Star", 2) > 0)
+        GameManager.Instance.oSpawner.hDrag.gameOver = true;
+        if (PlayerPrefs.GetInt("Star") > 0)
         {
             usingStar = true;
-            PlayerPrefs.SetInt("Star", PlayerPrefs.GetInt("Star", 2)-1);
+            PlayerPrefs.SetInt("Star", PlayerPrefs.GetInt("Star")-1);
             UpdateText();
             starEffect.gameObject.SetActive(true);
             hammerBtn.interactable = false;
             starBtn.interactable = false;
-            GameManager.Instance.oSpawner.gameOver = true;
-            StartCoroutine(MoveItemsCoroutine(Random.Range(2,5)));
+            StartCoroutine(MoveItemsCoroutine(UnityEngine.Random.Range(3,6)));
+            TSS_AnalyticalManager.instance.CustomBtnEvent("using_StarPower");
         }
         else
             ShowNotEnoughPower(false);
@@ -145,9 +150,10 @@ public class PowerManager : MonoBehaviour
             if (containerItems.Count == 0) break;
 
             // Select a random item
-            Transform item = containerItems[Random.Range(0, containerItems.Count-1)];
+            Transform item = containerItems[UnityEngine.Random.Range(0, containerItems.Count-1)];
             if (item != null)
             {
+                AudioManager.instance.PlayPowerSFX(starSound);
                 var rb = item.GetComponent<Rigidbody2D>();
                 rb.simulated = false;
                 rb.bodyType = RigidbodyType2D.Kinematic;
@@ -167,7 +173,7 @@ public class PowerManager : MonoBehaviour
 
             }
         }
-        GameManager.Instance.oSpawner.gameOver = false;
+        GameManager.Instance.oSpawner.hDrag.gameOver = false;
         usingStar = false;
         waitBeforeMove = false;
         starEffect.gameObject.SetActive(false);
@@ -186,11 +192,30 @@ public class PowerManager : MonoBehaviour
         }
         item.position = targetPos;
     }
+    Action callback;
     void ShowNotEnoughPower(bool isHammerPower)
     {
-
+        watchAdForPower.gameObject.SetActive(true);
+        AudioManager.instance.PlayClick();
+        callback = isHammerPower ? () => {
+            PlayerPrefs.SetInt("Hammer", PlayerPrefs.GetInt("Hammer")+2);
+            UpdateText();
+        } : () => {
+            PlayerPrefs.SetInt("Star", PlayerPrefs.GetInt("Star")+2);
+            UpdateText();
+        };
+        TSS_AnalyticalManager.instance.CustomBtnEvent(isHammerPower?"not enough hammer":"not enough stars");
     }
-
+    public void ShutWatchAd()
+    {
+        watchAdForPower.gameObject.SetActive(false);
+        AudioManager.instance.PlayClick();
+        GameManager.Instance.oSpawner.hDrag.gameOver = false;
+    }
+    public void OnClickAd()
+    {
+        TssAdsManager._Instance.ShowRewardedAd(callback,"GettingPowersFromAd");
+    }
     private CancellationTokenSource cts;
     private float settleDelay = 0.5f;
 

@@ -2,28 +2,36 @@
 using DG.Tweening;
 using System;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
     public ObjectSpawner oSpawner;
-    public GameObject failedPanel,settingPanel;
+    public GameObject failedPanel,settingPanel,infoPanel,fiveUp;
     public TextMeshProUGUI scoreT,failedFinalScore;
     public ParticleEffectPool particlePool;
     public static event Action OnGameOver,OnGameContinue;
     public PowerManager powerManager;
+
     private void Awake()
     {
         if(Instance != null)
-            Destroy(Instance);
+            Destroy(Instance.gameObject);
         Instance = this;
     }
     private void OnEnable()
     {
         scoreT.text = "00";
-       // OnGameOver += GameOver;
+        // OnGameOver += GameOver;musicEnabled = PlayerPrefs.GetInt("Music", 1) == 1;
+        soundEnabled = PlayerPrefs.GetInt("Sounds", 1) == 1;
+        SetImagesSprite();
+        playerScore = 0;
+        TssAdsManager._Instance.ShowBanner("MainMenu");
+        TssAdsManager._Instance.admobInstance.TopShowBanner();
     }
     int playerScore;
     public void ShowEffect(Vector3 pos,int points,GameObject nextTierPrefab)
@@ -43,6 +51,13 @@ public class GameManager : MonoBehaviour
             scoreT.text = playerScore.ToString();
             scoreT.transform.localScale = Vector3.one;
         });
+        if (playerScore >= 500 && playerScore % 500 == 0)
+        {
+            fiveUp.gameObject.SetActive(true);
+            DOVirtual.DelayedCall(1.1f,()=> {
+                fiveUp.gameObject.SetActive(false); 
+                TssAdsManager._Instance.ShowInterstitial("Player reached:" + playerScore); });
+        }
     }
     public void ShowSettings(bool val)
     {
@@ -67,16 +82,68 @@ public class GameManager : MonoBehaviour
     {
         TssAdsManager._Instance.ShowRewardedAd(GameContinue, "continue at:"+failedFinalScore);
     }
+    public Image soundImg, musicImg;
+    public Sprite soundSpriteOn, soundSpriteOff, musicSpriteOn, musicSpriteOff;
+    bool musicEnabled = false, soundEnabled = false;
+    void SetImagesSprite()
+    {
+        soundImg.sprite = soundEnabled ? soundSpriteOn : soundSpriteOff;
+        musicImg.sprite = musicEnabled ? musicSpriteOn : musicSpriteOff;
+    }
+    public void OnClickSounds()
+    {
+        soundEnabled = !soundEnabled;
+        PlayerPrefs.SetInt("Sounds", soundEnabled ? 1 : 0);
+        AudioManager.instance.SetSounds(soundEnabled);
+        SetImagesSprite();
+    }
+    public void ShowInfo(bool val)
+    {
+        DOVirtual.DelayedCall(0.1f, () => { oSpawner.gameOver = val; });
+        infoPanel.SetActive(val);
+        AudioManager.instance.PlayClick();
+        if (!val) TssAdsManager._Instance.ShowInterstitial("From info panel");
+    }
+    public void OnClickMusic()
+    {
+        musicEnabled = !musicEnabled;
+        PlayerPrefs.SetInt("Music", musicEnabled ? 1 : 0);
+        AudioManager.instance.SetMusic(musicEnabled);
+        SetImagesSprite();
+    }
     public void GameOver()
     {
-        OnGameOver?.Invoke();
-        DOVirtual.DelayedCall(1, () => { failedPanel.SetActive(true);
-        });
+        foreach (Delegate del in OnGameOver.GetInvocationList())
+        {
+            try
+            {
+                del.DynamicInvoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Error invoking method: {ex.Message}");
+            }
+        }
+        failedFinalScore.text = playerScore.ToString();
+
+
+               DOVirtual.DelayedCall(0.75f, () => {failedPanel.SetActive(true);
+                });
     }
     public void GameContinue()
     {
         failedPanel.SetActive(false);
-        OnGameContinue?.Invoke();
+        foreach (Delegate del in OnGameContinue.GetInvocationList())
+        {
+            try
+            {
+                del.DynamicInvoke();
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Error invoking method: {ex.Message}");
+            }
+        }
     }
 
     public void GiveReward()

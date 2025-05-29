@@ -21,7 +21,7 @@ public class ObjectSpawner : MonoBehaviour
 
     private List<int> shuffledIndices = new List<int>();
     private int currentIndex = 0;
-
+    public bool hangingPiece;
     public void SpawnRandomObject()
     {
         if (gameOver) return;
@@ -35,10 +35,12 @@ public class ObjectSpawner : MonoBehaviour
 
         /*  int index = shuffledIndices[currentIndex];
           currentIndex++;*/
+        hangingPiece = true;
         GameObject piece = Instantiate(spawnableObjects[shuffledIndices[currentIndex++]], spawnPoint.position, Quaternion.identity, piecesParent);
-        hDrag.StartDraging(piece);
-        GameManager.Instance.powerManager.containerItems.Add(piece.transform);
 
+        pieceObj = piece.GetComponent<MergableObject>();
+        hDrag.StartDraging(piece,pieceObj);
+        GameManager.Instance.powerManager.containerItems.Add(piece.transform);
         // Show the next object's index
         int nextIndex = GetNextObjectIndex();
         if (nextIndex != -1)
@@ -54,16 +56,22 @@ public class ObjectSpawner : MonoBehaviour
             Debug.Log("No next object index. Reshuffling.");
         }
     }
+    MergableObject pieceObj;
+    public void CheckMergable(MergableObject mm)
+    {
+        if(hangingPiece && mm==pieceObj)
+            hangingPiece=false;
+    }
 
     private void GenerateShuffledIndices(int playerRank)
     {
         shuffledIndices.Clear();
 
-        int maxExclusiveIndex = (playerRank > 3)
-            ? Mathf.Clamp(playerRank - 1, 4, spawnableObjects.Length)
-            : Mathf.Min(3, spawnableObjects.Length);
+        int maxExclusiveIndex = (playerRank > 4)
+            ? Mathf.Clamp(playerRank-1 , 4, 6)
+            : Mathf.Min(4, spawnableObjects.Length);
 
-        for (int i = 0; i < maxExclusiveIndex; i++)
+        for (int i = 0; i <= maxExclusiveIndex; i++)
         {
             shuffledIndices.Add(i);
         }
@@ -101,7 +109,7 @@ public class ObjectSpawner : MonoBehaviour
         RemoveHalfObjects();
         gameOver = false;
         piecesParent.gameObject.SetActive(true);
-
+        if (!hangingPiece) SpawnRandomObject();
     }
     public void RemoveHalfObjects()
     {
@@ -124,7 +132,8 @@ public class ObjectSpawner : MonoBehaviour
     }
     public void NewObject(GameObject nextTierPrefab,Vector3 mergePos)
     {
-
-        GameManager.Instance.powerManager.containerItems.Add(Instantiate(nextTierPrefab, mergePos, Quaternion.identity, piecesParent).transform);
+        GameObject piece = Instantiate(nextTierPrefab, mergePos, Quaternion.identity, piecesParent);
+        piece.GetComponent<MergableObject>().released = true;
+        GameManager.Instance.powerManager.containerItems.Add(piece.transform);
     }
 }

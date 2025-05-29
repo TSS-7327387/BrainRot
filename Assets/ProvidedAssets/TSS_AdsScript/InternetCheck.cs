@@ -39,10 +39,7 @@ public class InternetCheck : MonoBehaviour
         else if (PrivacyPolicy == 1)
         {
             Init();
-            DOVirtual.DelayedCall(1,
-                     () => {
-                         CanvasScriptSplash.instance.LoadScene(1);
-                     });
+            CanvasScriptSplash.instance.LoadScene(1);
         }
         isInitialize = true;
     }

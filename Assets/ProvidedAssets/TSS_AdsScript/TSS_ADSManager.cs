@@ -1,5 +1,6 @@
 using System;
 using GoogleMobileAds.Api;
+// using LaundaryMan;
 using UnityEngine;
 
 
@@ -45,13 +46,14 @@ public class TssAdsManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+  //  public AdTimer TIMER;
 
     public void Init()
     {
-    
         Debug.Log("Application.version " + Application.version);
- 
+
         PostInit();
+       // TIMER.Init();
     }
 
     public TSS_Admob admobInstance;
@@ -105,12 +107,17 @@ public class TssAdsManager : MonoBehaviour
         if (adPriority == AdPriority.Max)
         {
             if (appLovinMax)
+            {
                 appLovinMax.ShowInterstitial();
-            
+            }
+            else
+            {
+                admobInstance.ShowInterstitial();
+            }
         }
         else
         {
-            appLovinMax.InitializeInterstitialAds();
+          //  appLovinMax.InitializeInterstitialAds();
             admobInstance.ShowInterstitial();
         }
     }
@@ -135,7 +142,6 @@ public class TssAdsManager : MonoBehaviour
         if (adPriority == AdPriority.Max)
         {
             appLovinMax.ShowRewardedAd(ac);
-            
         }
         else
             admobInstance.ShowRewardedAdmob(ac);
@@ -226,20 +232,24 @@ public class TssAdsManager : MonoBehaviour
         _isBannerShowing = false;
         admobInstance.HideBanner();
     }
+
     public void HideRecBanner()
     {
         _isBannerReady = false;
         _isBannerShowing = false;
         admobInstance.HideRecBanner();
-    } 
+    }
+
     public void HideBannerAppOpen()
     {
         admobInstance.HideBanner();
     }
+
     public void HideRecBannerAppOpen()
     {
         admobInstance.HideRecBanner();
-    } 
+    }
+
     public bool IsBannerAdAvailable()
     {
         return _isBannerReady;

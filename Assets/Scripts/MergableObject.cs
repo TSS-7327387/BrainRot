@@ -5,12 +5,16 @@ public class MergableObject : MonoBehaviour
     public int objectType;
     public GameObject nextTierPrefab;
     private bool hasMerged = false;
-    public bool released;
+    public bool released=false;
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(!released)GameManager.Instance.UpdateScore(5);
-        released = true;
+        if (!released && collision.gameObject.CompareTag("Ceiling"))
+        {
+            return;
+        }
+        //if(!released)GameManager.Instance.UpdateScore(5);
+        //released = true;
         if (hasMerged || nextTierPrefab==null) return;
 
         MergableObject other = collision.gameObject.GetComponent<MergableObject>();
@@ -25,10 +29,11 @@ public class MergableObject : MonoBehaviour
             GameManager.Instance.powerManager.containerItems.Remove(transform);
             Destroy(gameObject);
             Destroy(other.gameObject);
-            if(GameManager.Instance.oSpawner.rank==objectType)
+            if(GameManager.Instance.oSpawner.rank==objectType && objectType<GameManager.Instance.oSpawner.spawnableObjects.Length-1)
                 GameManager.Instance.oSpawner.rank = objectType+1;
 
             GameManager.Instance.ShowEffect(mergePos,objectType*5,nextTierPrefab);
+            GameManager.Instance.oSpawner.CheckMergable(this);
         }
     }
 }

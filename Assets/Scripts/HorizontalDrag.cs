@@ -11,7 +11,14 @@ public class HorizontalDrag : MonoBehaviour
     public ObjectSpawner oSpawner;
     private float startY;
     Transform target;
-    public void StartDraging(GameObject obj)
+    public AudioClip dropSound;
+    MergableObject currentMergable;
+    private void Start()
+    {
+        GameManager.OnGameOver += GameOver;
+        GameManager.OnGameContinue += OnContinue;
+    }
+    public void StartDraging(GameObject obj,MergableObject m_obj)
     {
         rb = obj.GetComponent<Rigidbody2D>();
         rb.simulated = false;
@@ -19,13 +26,22 @@ public class HorizontalDrag : MonoBehaviour
         hasBeenReleased = false;
         target = obj.GetComponent<Transform>();
         startY = target.position.y;
+        currentMergable = m_obj;
     }
-
+    public bool gameOver;
+    void GameOver()
+    {
+        gameOver = true;
+    }
+    void OnContinue()
+    {
+        gameOver=false;
+    }
 
     void Update()
     {
         
-        if (hasBeenReleased || oSpawner.gameOver) return;
+        if (hasBeenReleased || gameOver) return;
 
         if (Input.touchCount > 0)
         {
@@ -53,10 +69,16 @@ public class HorizontalDrag : MonoBehaviour
 
     private void ReleaseObject()
     {
+        oSpawner.hangingPiece = false;
         hasBeenReleased = true;
         rb.bodyType = RigidbodyType2D.Dynamic; // Enable gravity
         rb.simulated = true;
         rb = null;
-        DOVirtual.DelayedCall(1, () => { oSpawner.SpawnRandomObject(); });
+        AudioManager.instance?.PlaySFX(dropSound);
+        // Save currentMergable in a local variable
+        MergableObject releasedMergable = currentMergable;
+        DOVirtual.DelayedCall(1, () => { GameManager.Instance.UpdateScore(5); oSpawner.SpawnRandomObject(); });
+        DOVirtual.DelayedCall(2, () => { releasedMergable.released = true; });
+
     }
 }

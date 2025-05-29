@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:keep="@string/gcm_defaultSenderId,@string/google_storage_bucket,@string/project_id,@string/google_api_key,@string/google_crash_reporting_api_key,@string/google_app_id">
-  <string name="gcm_defaultSenderId" translatable="false">748863233462</string>
-  <string name="google_storage_bucket" translatable="false">commandoaction.firebasestorage.app</string>
-  <string name="project_id" translatable="false">commandoaction</string>
-  <string name="google_api_key" translatable="false">AIzaSyAvM8m8mbSRgagfnFt4ib2guJZjYb_TttI</string>
-  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyAvM8m8mbSRgagfnFt4ib2guJZjYb_TttI</string>
-  <string name="google_app_id" translatable="false">1:748863233462:android:592addee0419a91f8e3517</string>
+  <string name="gcm_defaultSenderId" translatable="false">266126779712</string>
+  <string name="google_storage_bucket" translatable="false">brainrot-challenge-mini-game.firebasestorage.app</string>
+  <string name="project_id" translatable="false">brainrot-challenge-mini-game</string>
+  <string name="google_api_key" translatable="false">AIzaSyDjovso8kJ1sprlU8fhKcSKaxjbAbA-ahM</string>
+  <string name="google_crash_reporting_api_key" translatable="false">AIzaSyDjovso8kJ1sprlU8fhKcSKaxjbAbA-ahM</string>
+  <string name="google_app_id" translatable="false">1:266126779712:android:d12052282dc7295346c6a5</string>
 </resources>

@@ -91,7 +91,7 @@ public class AppLovinMax : MonoBehaviour
         MaxSdk.LoadInterstitial(InterstitialAdUnitId);
     }
 
-    public void ShowInterstitial()
+    public void ShowInterstitial(bool checkAdmob=true)
     {
         if (!GlobalConstant.AdsON)
         {
@@ -109,10 +109,12 @@ public class AppLovinMax : MonoBehaviour
             MaxSdk.ShowInterstitial(InterstitialAdUnitId);
             TSS_AnalyticalManager.instance.InterstitialEvent("Max_Inter_Shown");
         }
-        else
+        else if(checkAdmob)
         {
+            TssAdsManager._Instance.admobInstance.ShowInterstitial(false);
             TSS_AnalyticalManager.instance.InterstitialEvent("Max_Inter_Failed");
         }
+        
     }
 
 

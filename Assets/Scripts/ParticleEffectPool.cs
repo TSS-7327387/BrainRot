@@ -1,12 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
+using static UnityEngine.ParticleSystem;
 
 public class ParticleEffectPool : MonoBehaviour
 {
     [Header("Particle Effect Prefab")]
     public GameObject newParticlePrefab;
     public GameObject[] particlePrefab;
-
+    List<GameObject> particles = new List<GameObject>();
 
     private Queue<GameObject> pool = new Queue<GameObject>();
 
@@ -19,6 +20,7 @@ public class ParticleEffectPool : MonoBehaviour
             // Add a helper script to handle OnParticleSystemStopped
             ParticleReturner returner = particlePrefab[i].GetComponent<ParticleReturner>();
             returner.SetPool(this);
+            particles.Add(particlePrefab[i]);
 
             pool.Enqueue(particlePrefab[i]);
         }
@@ -26,10 +28,14 @@ public class ParticleEffectPool : MonoBehaviour
     }
     void OnGameOver()
     {
-        foreach (Transform obj in transform)
+        for(int i = 0; i < particles.Count; i++)
+        {
+            particles[i].SetActive(false);
+        }
+       /* foreach (Transform obj in transform)
         {
             obj.gameObject.SetActive(false);
-        }
+        }*/
     }
     /// <summary>
     /// Show particle effect at a specified position.
@@ -46,6 +52,7 @@ public class ParticleEffectPool : MonoBehaviour
         {
             // Optional: expand pool if needed
             particle = Instantiate(newParticlePrefab,transform);
+            particles.Add(particle);
             ParticleReturner returner = particle.AddComponent<ParticleReturner>();
             returner.SetPool(this);
         }
