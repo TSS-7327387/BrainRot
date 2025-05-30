@@ -8,7 +8,7 @@ public class MainMenuManager : MonoBehaviour
     public Image soundImg, musicImg;
     public Sprite soundSpriteOn,soundSpriteOff, musicSpriteOn, musicSpriteOff;
     bool musicEnabled = false, soundEnabled = false;
-    public AudioClip playClip,springClip;
+    public AudioClip playClip,springClip,prankClip;
     // Start is called before the first frame update
     void OnEnable()
     {
@@ -42,12 +42,24 @@ public class MainMenuManager : MonoBehaviour
         AudioManager.instance.SetMusic(musicEnabled);
         SetImagesSprite();
     }
+    public void OnClickPP()
+    {
+        AudioManager.instance.PlayClick();
+        Application.OpenURL(GlobalConstant.PrivacyPoliciesLInk);
+    }
     public void OnClickPlay()
     {
         AudioManager.instance.PlaySFX(playClip);
         CanvasScriptSplash.instance.LoadScene(2);
         AudioManager.instance.ChangeBGM(false);
         TssAdsManager._Instance.ShowInterstitial("FromMainToGameplay");
+    }
+    public void OnClickPlayPranks()
+    {
+        AudioManager.instance.PlaySFX(prankClip);
+        CanvasScriptSplash.instance.LoadScene(3);
+        AudioManager.instance.ShutBGM();
+        TssAdsManager._Instance.ShowInterstitial("FromMainToPranks");
     }
     public void OnClickRateUs()
     {

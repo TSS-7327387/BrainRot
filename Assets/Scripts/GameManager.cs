@@ -38,7 +38,7 @@ public class GameManager : MonoBehaviour
     {
         particlePool.ShowEffect(pos);
         UpdateScore(points);
-        AudioManager.instance.PlaySFX();
+        //AudioManager.instance.PlaySFX();
         oSpawner.NewObject(nextTierPrefab,pos);
         powerManager.OnExplosionStart();
     }
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
             scoreT.text = playerScore.ToString();
             scoreT.transform.localScale = Vector3.one;
         });
-        if (playerScore >= 500 && playerScore % 500 == 0)
+        if (playerScore % 500 == 0)
         {
             fiveUp.gameObject.SetActive(true);
             DOVirtual.DelayedCall(1.1f,()=> {

@@ -30,7 +30,7 @@ MonoBehaviour:
   secretKey:
   - e40cd4b707874e8e34e7b97d1bc7ad8618ddb9f8
   Build:
-  - 0.1
+  - 1.1
   SelectedPlatformOrganization:
   - TheSecretSociety
   SelectedPlatformStudio:
@@ -63,7 +63,7 @@ MonoBehaviour:
   ResourceCurrencies: []
   LastCreatedGamePlatform: 0
   Platforms: 0b000000
-  CurrentInspectorState: 3
+  CurrentInspectorState: 1
   ClosedHints: 
   DisplayHints: 0
   DisplayHintsScrollState: {x: 0, y: 0}

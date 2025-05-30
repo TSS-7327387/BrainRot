@@ -1099,8 +1099,6 @@ public class TSS_Admob : MonoBehaviour
 
             ad.OnAdFullScreenContentClosed += () =>
             {
-                GlobalConstant.RewardedAdsWatched(TssAdsManager._Instance.action);
-
                 if (GlobalConstant.UseAdBidding)
                     rewardedFlooringType = RequestFloorType.High;
 
@@ -1127,7 +1125,11 @@ public class TSS_Admob : MonoBehaviour
         {
             isInterstialAdPresent = true;
 
-            rewardedAd.Show((Reward reward) => { PrintStatus("Rewarded ad granted a reward: " + reward.Amount); });
+            rewardedAd.Show((Reward reward) => {
+
+                GlobalConstant.RewardedAdsWatched(TssAdsManager._Instance.action);
+
+                PrintStatus("Rewarded ad granted a reward: " + reward.Amount); });
         }
         else
         {

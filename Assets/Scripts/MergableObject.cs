@@ -6,7 +6,7 @@ public class MergableObject : MonoBehaviour
     public GameObject nextTierPrefab;
     private bool hasMerged = false;
     public bool released=false;
-
+    public AudioClip sound;
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (!released && collision.gameObject.CompareTag("Ceiling"))
@@ -31,7 +31,7 @@ public class MergableObject : MonoBehaviour
             Destroy(other.gameObject);
             if(GameManager.Instance.oSpawner.rank==objectType && objectType<GameManager.Instance.oSpawner.spawnableObjects.Length-1)
                 GameManager.Instance.oSpawner.rank = objectType+1;
-
+            AudioManager.instance.PlaySFX(sound);
             GameManager.Instance.ShowEffect(mergePos,objectType*5,nextTierPrefab);
             GameManager.Instance.oSpawner.CheckMergable(this);
         }

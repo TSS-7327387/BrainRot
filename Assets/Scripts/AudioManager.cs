@@ -17,10 +17,12 @@ public class AudioManager : MonoBehaviour
     }
     public void PlaySFX()
     {
+        sfx.Stop();
         sfx.PlayOneShot(popClip);
     }
     public void PlaySFX(AudioClip clip)
     {
+        sfx.Stop();
         sfx.PlayOneShot(clip);
     }
     public void PlayPowerSFX(AudioClip clip)
@@ -47,8 +49,13 @@ public class AudioManager : MonoBehaviour
     }
     public void ChangeBGM(bool mainMenu)
     {
+        BGM.Stop();
         BGM.clip = mainMenu ? bgm1 : bgm2;
-        DOVirtual.DelayedCall(0.5f, ()=>{BGM.Play(); });
+        DOVirtual.DelayedCall(1, ()=>{BGM.Play(); });
+    }
+    public void ShutBGM()
+    {
+        BGM.Stop();
     }
 
 }
