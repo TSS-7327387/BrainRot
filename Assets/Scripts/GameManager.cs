@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
         soundEnabled = PlayerPrefs.GetInt("Sounds", 1) == 1;
         SetImagesSprite();
         playerScore = 0;
-        TssAdsManager._Instance.ShowBanner("MainMenu");
+        TssAdsManager._Instance.ShowBanner("Gameplay");
         TssAdsManager._Instance.admobInstance.TopShowBanner();
     }
     int playerScore;
@@ -63,7 +63,22 @@ public class GameManager : MonoBehaviour
     {
         settingPanel.SetActive(val);
         AudioManager.instance.PlayClick();
-        DOVirtual.DelayedCall(0.1f, () => { oSpawner.gameOver = val; }) ;
+        CheckSpwaner(val);
+    }
+    void CheckSpwaner(bool val)
+    {
+        DOVirtual.DelayedCall(0.1f, () => {
+            oSpawner.hDrag.gameOver = val;
+            oSpawner.gameOver = val;
+            if (!val && !oSpawner.hangingPiece) oSpawner.SpawnRandomObject();
+        });
+    }
+    public void ShowInfo(bool val)
+    {
+        infoPanel.SetActive(val);
+        AudioManager.instance.PlayClick();
+        CheckSpwaner(val);
+        if (!val) TssAdsManager._Instance.ShowInterstitial("From info panel");
     }
     public void Home()
     {
@@ -97,13 +112,7 @@ public class GameManager : MonoBehaviour
         AudioManager.instance.SetSounds(soundEnabled);
         SetImagesSprite();
     }
-    public void ShowInfo(bool val)
-    {
-        DOVirtual.DelayedCall(0.1f, () => { oSpawner.gameOver = val; });
-        infoPanel.SetActive(val);
-        AudioManager.instance.PlayClick();
-        if (!val) TssAdsManager._Instance.ShowInterstitial("From info panel");
-    }
+    
     public void OnClickMusic()
     {
         musicEnabled = !musicEnabled;
@@ -113,6 +122,7 @@ public class GameManager : MonoBehaviour
     }
     public void GameOver()
     {
+        AudioManager.instance.PlayLoseSFX();
         foreach (Delegate del in OnGameOver.GetInvocationList())
         {
             try

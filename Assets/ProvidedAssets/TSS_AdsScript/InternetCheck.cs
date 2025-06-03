@@ -21,7 +21,7 @@ public class InternetCheck : MonoBehaviour
 
     private void Awake()
     {
-      
+
     }
 
     public void Initlize()
@@ -31,15 +31,14 @@ public class InternetCheck : MonoBehaviour
         if (PrivacyPolicy == 0)
         {
             CanvasScriptSplash.instance.EmptyLoading(() =>
-            {
-                DOVirtual.DelayedCall(1,
-                    () => { CanvasScriptSplash.instance.ChangeCanvas(CanvasStats.PrivacyPolicy); });
+            { 
+                CanvasScriptSplash.instance.ChangeCanvas(CanvasStats.PrivacyPolicy);
             });
         }
         else if (PrivacyPolicy == 1)
         {
             Init();
-            CanvasScriptSplash.instance.LoadScene(1);
+            DOVirtual.DelayedCall(1, () => { CanvasScriptSplash.instance.LoadScene(1); });
         }
         isInitialize = true;
     }

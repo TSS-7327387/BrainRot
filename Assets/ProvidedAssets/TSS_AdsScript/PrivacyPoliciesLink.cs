@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,6 +17,11 @@ public class PrivacyPoliciesLink : MonoBehaviour
         internetCheck.PrivacyPolicy = 1;
         internetCheck.Init();
         CanvasScriptSplash.instance.ChangeCanvas(CanvasStats.Loading);
-        CanvasScriptSplash.instance.LoadScene(1);
+
+        DOVirtual.DelayedCall(1,
+            () =>
+            {
+                CanvasScriptSplash.instance.LoadScene(1);
+            });
     }
 }

@@ -226,11 +226,14 @@ public class TSS_Admob : MonoBehaviour
         }
 
         Debug.Log("Initialization complete.");
-        RequestAndLoadAppOpenAd();
-        RequestAndLoadInterstitialAd();
-        RequestBannerAd();
-        RequestAndLoadRewardedAd();
-        LeftRequestBannerAd();
+        DOVirtual.DelayedCall(0.5f, () =>
+        {
+            RequestAndLoadAppOpenAd();
+            RequestAndLoadInterstitialAd();
+            RequestBannerAd();
+            RequestAndLoadRewardedAd();
+            LeftRequestBannerAd();
+        });
         //RequestRecBannerAd();
         //RequestAndLoadInterstitialAd();
         //TopRequestBannerAd();
@@ -510,7 +513,7 @@ public class TSS_Admob : MonoBehaviour
     #endregion
 
     #region Bottom BANNER ADS
-
+    bool checkTopBannerOnce=true, checkBannerOnce=true;
     public RequestFloorType bannerAdRequestFloorType;
 
     public void RequestBannerAd()
@@ -549,14 +552,19 @@ public class TSS_Admob : MonoBehaviour
             PrintStatus("Banner ad failed to load with error: " + error.GetMessage());
             OnAdFailedToLoadEvent.Invoke();
 
-          /*  if (GlobalConstant.UseAdBidding)
-            {
-                // ✅ Prevents infinite recursion by clamping the request floor type
-                bannerAdRequestFloorType =
-                    (RequestFloorType)Math.Min((int)bannerAdRequestFloorType + 1, (int)RequestFloorType.Failed);
+            /*  if (GlobalConstant.UseAdBidding)
+              {
+                  // ✅ Prevents infinite recursion by clamping the request floor type
+                  bannerAdRequestFloorType =
+                      (RequestFloorType)Math.Min((int)bannerAdRequestFloorType + 1, (int)RequestFloorType.Failed);
 
+                  DOVirtual.DelayedCall(1, RequestBannerAd);
+              }*/
+            if (checkBannerOnce)
+            {
                 DOVirtual.DelayedCall(1, RequestBannerAd);
-            }*/
+                checkBannerOnce = false;
+            }
         };
 
         bannerView.OnAdImpressionRecorded += () => { PrintStatus("Banner ad recorded an impression."); };
@@ -601,7 +609,7 @@ public class TSS_Admob : MonoBehaviour
         {
             return;
         }
-
+        checkBannerOnce = true;
         if (bannerView != null)
         {
             bannerView.Show();
@@ -655,11 +663,14 @@ public class TSS_Admob : MonoBehaviour
                 PrintStatus("Banner ad failed to load with error: " + error.GetMessage());
                 OnAdFailedToLoadEvent.Invoke();
 
-              /*  // ✅ Prevents infinite recursion by clamping the request floor type
-                bannerAdRequestFloorType =
-                    (RequestFloorType)Math.Min((int)bannerAdRequestFloorType + 1, (int)RequestFloorType.Failed);
-
-                DOVirtual.DelayedCall(1, LeftRequestBannerAd);*/
+                /*  // ✅ Prevents infinite recursion by clamping the request floor type
+                  bannerAdRequestFloorType =
+                      (RequestFloorType)Math.Min((int)bannerAdRequestFloorType + 1, (int)RequestFloorType.Failed);*/
+                if (checkTopBannerOnce)
+                {
+                    DOVirtual.DelayedCall(1, LeftRequestBannerAd);
+                    checkTopBannerOnce=false;
+                }
             };
 
             TopbannerView.OnAdImpressionRecorded += () => { PrintStatus("Banner ad recorded an impression."); };
@@ -705,6 +716,7 @@ public class TSS_Admob : MonoBehaviour
             return;
         }
 
+        checkTopBannerOnce = true;
         if (TopbannerView != null)
         {
             TopbannerView.Show();

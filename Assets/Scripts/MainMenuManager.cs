@@ -1,4 +1,5 @@
 
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,8 +13,11 @@ public class MainMenuManager : MonoBehaviour
     // Start is called before the first frame update
     void OnEnable()
     {
-        TssAdsManager._Instance.ShowBanner("MainMenu");
-        TssAdsManager._Instance.admobInstance.TopShowBanner();
+        DOVirtual.DelayedCall(1, () =>
+        {
+            TssAdsManager._Instance.ShowBanner("MainMenu");
+            TssAdsManager._Instance.admobInstance.TopShowBanner();
+        });
         musicEnabled = PlayerPrefs.GetInt("Music", 1) == 1;
         soundEnabled = PlayerPrefs.GetInt("Sounds", 1) == 1;
         SetImagesSprite();

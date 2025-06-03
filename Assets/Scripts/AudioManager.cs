@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public AudioSource BGM,sfx,clickSource,powersSFX;
+    public AudioSource BGM,sfx,sfx2,clickSource,powersSFX;
     public AudioClip popClip,loseClip,clipSFX,bgm1,bgm2;
     public static AudioManager instance;
 
@@ -15,10 +15,13 @@ public class AudioManager : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    public void PlaySFX()
+    public void PlaySFX2(AudioClip audio = null)
     {
-        sfx.Stop();
-        sfx.PlayOneShot(popClip);
+        sfx2.Stop();
+        if(audio == null)
+            sfx2.PlayOneShot(popClip);
+        else
+            sfx2.PlayOneShot(audio);
     }
     public void PlaySFX(AudioClip clip)
     {
@@ -36,12 +39,13 @@ public class AudioManager : MonoBehaviour
     public void SetSounds(bool val)
     {
         sfx.volume = val ? 1 : 0;
+        sfx2.volume = val ? 1 : 0;
         clickSource.volume = val ? 1 : 0;
         powersSFX.volume = val ? 1 : 0;
     }
     public void SetMusic(bool val)
     {
-        BGM.volume = val ? 1 : 0;
+        BGM.volume = val ? 1 : 0.45f;
     }
     public void PlayClick()
     {

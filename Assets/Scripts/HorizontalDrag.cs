@@ -74,7 +74,7 @@ public class HorizontalDrag : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Dynamic; // Enable gravity
         rb.simulated = true;
         rb = null;
-        AudioManager.instance?.PlaySFX(dropSound);
+        AudioManager.instance?.PlaySFX2(dropSound);
         // Save currentMergable in a local variable
         MergableObject releasedMergable = currentMergable;
         DOVirtual.DelayedCall(1, () => { GameManager.Instance.UpdateScore(5); oSpawner.SpawnRandomObject(); });

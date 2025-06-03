@@ -203,6 +203,9 @@ public class FirebaseRemoteConfig : MonoBehaviour
             GlobalConstant.RateUsLink =
                 Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
                     .GetValue("RateUsLink").StringValue;
+            GlobalConstant.MoreGamesLink =
+                Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
+                    .GetValue("MoreGamesLink").StringValue;
             if (GlobalConstant.isLogger) print("3");
             GlobalConstant.PrivacyPoliciesLInk =
                 Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
@@ -327,6 +330,9 @@ public class FirebaseRemoteConfig : MonoBehaviour
             GlobalConstant.RateUsLink =
                 Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
                     .GetValue("RateUsLinkIOS").StringValue;
+            GlobalConstant.MoreGamesLink =
+                Firebase.RemoteConfig.FirebaseRemoteConfig.DefaultInstance
+                    .GetValue("MoreGamesLinkIOS").StringValue;
             if (GlobalConstant.isLogger)
                 print("3");
             GlobalConstant.PrivacyPoliciesLInk =
