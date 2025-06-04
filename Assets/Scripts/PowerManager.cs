@@ -63,6 +63,7 @@ public class PowerManager : MonoBehaviour
             UpdateText();
             hammerBtn.interactable = false;
             starBtn.interactable = false;
+            GameManager.Instance.ceiling.gameOver = true;
             DOVirtual.DelayedCall(0.1f,()=> { usingHammer = true; });
             TSS_AnalyticalManager.instance.CustomBtnEvent("using_HammerPower");
         }
@@ -115,6 +116,7 @@ public class PowerManager : MonoBehaviour
             hammerBtn.interactable = true;
             starBtn.interactable = true;
             GameManager.Instance.oSpawner.hDrag.gameOver = false;
+            GameManager.Instance.ceiling.gameOver = false;
         });
     }
     #endregion
@@ -130,6 +132,7 @@ public class PowerManager : MonoBehaviour
             starEffect.gameObject.SetActive(true);
             hammerBtn.interactable = false;
             starBtn.interactable = false;
+            GameManager.Instance.ceiling.gameOver = true;
             StartCoroutine(MoveItemsCoroutine(UnityEngine.Random.Range(3,6)));
             TSS_AnalyticalManager.instance.CustomBtnEvent("using_StarPower");
         }
@@ -174,6 +177,7 @@ public class PowerManager : MonoBehaviour
             }
         }
         GameManager.Instance.oSpawner.hDrag.gameOver = false;
+        GameManager.Instance.ceiling.gameOver = false;
         usingStar = false;
         waitBeforeMove = false;
         starEffect.gameObject.SetActive(false);

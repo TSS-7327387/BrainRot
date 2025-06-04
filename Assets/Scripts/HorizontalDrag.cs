@@ -15,6 +15,7 @@ public class HorizontalDrag : MonoBehaviour
     MergableObject currentMergable;
     private void Start()
     {
+        hasBeenReleased = true;
         GameManager.OnGameOver += GameOver;
         GameManager.OnGameContinue += OnContinue;
     }
@@ -79,6 +80,5 @@ public class HorizontalDrag : MonoBehaviour
         MergableObject releasedMergable = currentMergable;
         DOVirtual.DelayedCall(1, () => { GameManager.Instance.UpdateScore(5); oSpawner.SpawnRandomObject(); });
         DOVirtual.DelayedCall(2, () => { releasedMergable.released = true; });
-
     }
 }

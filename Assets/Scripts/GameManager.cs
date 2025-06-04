@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public ParticleEffectPool particlePool;
     public static event Action OnGameOver,OnGameContinue;
     public PowerManager powerManager;
-
+    public Ceiling ceiling;
     private void Awake()
     {
         if(Instance != null)
@@ -154,6 +154,7 @@ public class GameManager : MonoBehaviour
                 Debug.LogError($"Error invoking method: {ex.Message}");
             }
         }
+        TssAdsManager._Instance.ShowInterstitial("GameLostAt:"+playerScore);
     }
 
     public void GiveReward()

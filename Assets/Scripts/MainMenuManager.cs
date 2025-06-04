@@ -56,14 +56,14 @@ public class MainMenuManager : MonoBehaviour
         AudioManager.instance.PlaySFX(playClip);
         CanvasScriptSplash.instance.LoadScene(2);
         AudioManager.instance.ChangeBGM(false);
-        TssAdsManager._Instance.ShowInterstitial("FromMainToGameplay");
+        DOVirtual.DelayedCall(1, () => { TssAdsManager._Instance.ShowInterstitial("FromMainToGameplay"); });
     }
     public void OnClickPlayPranks()
     {
         AudioManager.instance.PlaySFX(prankClip);
         CanvasScriptSplash.instance.LoadScene(3);
         AudioManager.instance.ShutBGM();
-        TssAdsManager._Instance.ShowInterstitial("FromMainToPranks");
+        DOVirtual.DelayedCall(1.5f, () => { TssAdsManager._Instance.ShowInterstitial("FromMainToPranks"); });
     }
     public void OnClickRateUs()
     {

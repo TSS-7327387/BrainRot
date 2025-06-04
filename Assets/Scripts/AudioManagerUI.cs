@@ -2,6 +2,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using MoreMountains.NiceVibrations;
+using System.Collections;
+using DG.Tweening;
 
 public class AudioManagerUI : MonoBehaviour
 {
@@ -64,6 +67,11 @@ public class AudioManagerUI : MonoBehaviour
         {
             UpdateSlider();
         }
+        if (!audioSource.isPlaying && vibrationCoroutine != null)
+        {
+            StopCoroutine(vibrationCoroutine);
+            vibrationCoroutine = null;
+        }
     }
 
     public void PlayPause()
@@ -72,11 +80,22 @@ public class AudioManagerUI : MonoBehaviour
         {
             audioSource.Pause();
             playPauseButton.image.sprite = playIcon;
+
+            if (vibrationCoroutine != null)
+            {
+                StopCoroutine(vibrationCoroutine);
+            }
         }
         else
         {
             audioSource.Play();
             playPauseButton.image.sprite = pauseIcon;
+
+            if (vibrationCoroutine != null)
+            {
+                StopCoroutine(vibrationCoroutine);
+            }
+            vibrationCoroutine = StartCoroutine(VibrateWhilePlaying());
         }
     }
 
@@ -99,12 +118,17 @@ public class AudioManagerUI : MonoBehaviour
     }
     void PlayClip()
     {
-
         audioSource.Stop();
         audioSource.clip = audioClips[currentClipIndex];
         audioSource.time = 0f;
         audioSource.Play();
         playPauseButton.image.sprite = pauseIcon;
+
+        if (vibrationCoroutine != null)
+        {
+            StopCoroutine(vibrationCoroutine);
+        }
+        vibrationCoroutine = StartCoroutine(VibrateWhilePlaying());
 
         UpdateSlider();
         UpdateButtonStates();
@@ -145,14 +169,75 @@ public class AudioManagerUI : MonoBehaviour
     {
         isDragging = false;
         audioSource.time = progressSlider.value;
-    }
 
+        if (audioSource.isPlaying)
+        {
+            if (vibrationCoroutine != null)
+            {
+                StopCoroutine(vibrationCoroutine);
+            }
+            vibrationCoroutine = StartCoroutine(VibrateWhilePlaying());
+        }
+    }
+    private Coroutine vibrationCoroutine;
+
+    IEnumerator VibrateWhilePlaying()
+    {
+        while (audioSource.isPlaying)
+        {
+            switch (currentClipIndex)
+            {
+                case 0:
+                    MMVibrationManager.Haptic(HapticTypes.MediumImpact, false, true, this);
+                    break;
+                case 1:
+                    MMVibrationManager.Haptic(HapticTypes.Failure, false, true, this);
+                    break;;
+                case 5:
+                    MMVibrationManager.Haptic(HapticTypes.RigidImpact, false, true, this);
+                    break;;
+                case 6:
+                    MMVibrationManager.Haptic(HapticTypes.HeavyImpact, false, true, this);
+                    yield return new WaitForSeconds(0.25f);
+                    break;
+                case 13:
+                    MMVibrationManager.Haptic(HapticTypes.SoftImpact, false, true, this);
+                    break;;
+
+            }
+            yield return new WaitForSeconds(0.15f); // Customize the frequency
+        }
+    }
     // For other buttons (each with a different sound)
     public void PlayButtonSound(int id)
     {
         if (id < 0 || id >= audioClips.Count)
             return;
 
+        if (id == 2)
+        {
+            MMVibrationManager.Haptic(HapticTypes.Success, false, true, this);
+        }
+        else if (id == 3)
+        {
+            MMVibrationManager.Haptic(HapticTypes.Success, false, true, this);
+        }
+        else if (id == 8)
+        {
+            DOVirtual.DelayedCall(0.11f,()=>{ MMVibrationManager.Haptic(HapticTypes.Success, false, true, this); });
+        }
+        else if (id == 1)
+        {
+            MMVibrationManager.Haptic(HapticTypes.LightImpact, false, true, this);
+        }
+        else
+        {
+            if (vibrationCoroutine != null)
+            {
+                StopCoroutine(vibrationCoroutine);
+            }
+        }
+        vibrationCoroutine = StartCoroutine(VibrateWhilePlaying());
         currentClipIndex = id;
         audioSource.Stop();
         audioSource.clip = audioClips[currentClipIndex];

@@ -10034,6 +10034,7 @@ MonoBehaviour:
   failedFinalScore: {fileID: 841301792}
   particlePool: {fileID: 955743296}
   powerManager: {fileID: 1642362238}
+  ceiling: {fileID: 105300379}
   soundImg: {fileID: 1567056474}
   musicImg: {fileID: 615553077}
   soundSpriteOn: {fileID: 21300000, guid: 9459581ca4a38e74ea2f6c85703cfbe1, type: 3}
